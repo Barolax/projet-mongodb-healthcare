@@ -26,13 +26,13 @@ projet-mongodb-healthcare/
 ├── automation/               # Service migrateur
 │   ├── Dockerfile
 │   ├── migration.py
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── docker-compose.yml    # Orchestration des services (mongo, migrator, tester)
 ├── schema_base/              # Schéma JSON MongoDB
 │   └── schema-base_medicale-patients.json
-├── tests/                    # Tests unitaires & export
+├── tests/                    # Tests unitaires & export (démo)
 │   ├── test_migration.py
 │   └── export_test.json
-├── docker-compose.yml        # Orchestration des services
 └── README.md
 
 🚀 Lancement de la migration
