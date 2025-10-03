@@ -211,3 +211,7 @@ __marimo__/
 /tests/export_test.json
 *.csv
 *.jsonl
+.DS_Store
+automation/.DS_Store
+data/*.ipynb
+
