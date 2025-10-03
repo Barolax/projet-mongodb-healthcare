@@ -1,0 +1,81 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "required": [
+      "_id",
+      "Admission_type",
+      "Age",
+      "Billing_amount",
+      "Blood_type",
+      "Date_of_admission",
+      "Discharge_date",
+      "Doctor",
+      "Gender",
+      "Hospital",
+      "Insurance_provider",
+      "Medical_condition",
+      "Medication",
+      "Nom",
+      "Prenom",
+      "Record_id",
+      "Room_number",
+      "Test_results"
+    ],
+    "properties": {
+      "_id": {
+        "bsonType": "int"
+      },
+      "Admission_type": {
+        "bsonType": "string"
+      },
+      "Age": {
+        "bsonType": "int"
+      },
+      "Billing_amount": {
+        "bsonType": "double"
+      },
+      "Blood_type": {
+        "bsonType": "string"
+      },
+      "Date_of_admission": {
+        "bsonType": "date"
+      },
+      "Discharge_date": {
+        "bsonType": "date"
+      },
+      "Doctor": {
+        "bsonType": "string"
+      },
+      "Gender": {
+        "bsonType": "string"
+      },
+      "Hospital": {
+        "bsonType": "string"
+      },
+      "Insurance_provider": {
+        "bsonType": "string"
+      },
+      "Medical_condition": {
+        "bsonType": "string"
+      },
+      "Medication": {
+        "bsonType": "string"
+      },
+      "Nom": {
+        "bsonType": "string"
+      },
+      "Prenom": {
+        "bsonType": "string"
+      },
+      "Record_id": {
+        "bsonType": "int"
+      },
+      "Room_number": {
+        "bsonType": "int"
+      },
+      "Test_results": {
+        "bsonType": "string"
+      }
+    }
+  }
+}

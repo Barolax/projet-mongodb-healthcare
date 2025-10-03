@@ -1,0 +1,4 @@
+pandas==2.2.2
+numpy==2.0.2
+pymongo==4.8.0
+unittest2==1.1.0

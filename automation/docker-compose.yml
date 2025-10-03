@@ -1,0 +1,58 @@
+services:
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    #ports:
+      #- "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--username", "root", "--password", "example", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  migrator:
+    build:
+      context: ./automation
+      dockerfile: Dockerfile
+    image: projet-mongodb-healthcare-migrator:latest
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      - CSV_FILE=/app/data/dataset_ready4Mongo.csv
+      - MONGO_URI=mongodb://root:example@mongo:27017/?authSource=admin
+      - DB_NAME=base_medicale
+      - COLLECTION_NAME=patients
+      - DROP_BEFORE=true
+      - DATE_COLUMNS=Date_of_admission,Discharge_date
+    volumes:
+      - ./data:/app/data:ro
+    networks:
+      - app-network
+
+  tester:
+    image: projet-mongodb-healthcare-migrator:latest
+    depends_on:
+      mongo:
+        condition: service_healthy
+    working_dir: /tests
+    volumes:
+      - ./tests:/tests:ro
+    networks:
+      - app-network
+    command: ["python", "-m", "unittest", "-v"]
+
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
