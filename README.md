@@ -11,13 +11,15 @@ La base MongoDB est alimentée par lots.
 
 3 tests unitaires garantissent l’intégrité de la migration.
 
-📂 Dataset
+# 📦 Dataset
 
-Source : Healthcare Dataset — Kaggle
+Le dataset nettoyé **n’est pas versionné dans le repo** (pour éviter d’alourdir l’historique).  
 
-Placez le fichier dans ./data sous le nom :
+➡️ Téléchargement direct depuis la Release GitHub :
 
-dataset_ready4Mongo.csv
+🔗 [Télécharger dataset_ready4Mongo.csv](https://github.com/Barolax/projet-mongodb-healthcare/releases/download/v1.0/dataset_ready4Mongo.csv)
+
+Placez le fichier dans ./data sous le nom : dataset_ready4Mongo.csv
 
 ⚙️ Architecture du projet
 projet-mongodb-healthcare/
@@ -25,7 +27,6 @@ projet-mongodb-healthcare/
 │   ├── Dockerfile
 │   ├── migration.py
 │   └── requirements.txt
-├── data/                     # CSV d’entrée
 ├── schema_base/              # Schéma JSON MongoDB
 │   └── schema-base_medicale-patients.json
 ├── tests/                    # Tests unitaires & export
