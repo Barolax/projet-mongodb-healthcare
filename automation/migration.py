@@ -1,9 +1,11 @@
+"""Script pour migrer des données CSV vers MongoDB."""
+
 import os
 import math
 import pandas as pd
 from pymongo import MongoClient, errors
 from pathlib import Path
-import json  # NOUVEAU : Pour l'export JSON valide
+import json #Pour l'export JSON valide
 
 # ==== Config ====
 CSV_FILE = os.getenv('CSV_FILE', '/Users/axellerolain/Desktop/P5/projet-mongodb-healthcare/data/dataset_ready4Mongo.csv')

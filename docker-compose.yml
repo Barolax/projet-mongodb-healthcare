@@ -5,13 +5,12 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
     #ports:
-      #- "27017:27017"
+      #- "27017:27017" # Expose MongoDB port pour accès MongoCompass si nécessaire
     volumes:
       - mongo-data:/data/db
-    networks:
-      - app-network
+    networks: [app-network]
     healthcheck:
-      test: ["CMD", "mongosh", "--username", "root", "--password", "example", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD","mongosh","--username","root","--password","example","--authenticationDatabase","admin","--eval","db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,8 +22,7 @@ services:
       dockerfile: Dockerfile
     image: projet-mongodb-healthcare-migrator:latest
     depends_on:
-      mongo:
-        condition: service_healthy
+      mongo: { condition: service_healthy }
     environment:
       - CSV_FILE=/app/data/dataset_ready4Mongo.csv
       - MONGO_URI=mongodb://root:example@mongo:27017/?authSource=admin
@@ -33,22 +31,19 @@ services:
       - DROP_BEFORE=true
       - DATE_COLUMNS=Date_of_admission,Discharge_date
     volumes:
-      - ./data:/app/data:ro
-    networks:
-      - app-network
+      - /Users/axellerolain/Desktop/P5/projet-mongodb-healthcare/data:/app/data:ro  # ← ton chemin
+    networks: [app-network]
 
   tester:
     image: projet-mongodb-healthcare-migrator:latest
     depends_on:
-      mongo:
-        condition: service_healthy
+      mongo: { condition: service_healthy } #condition que mongo soit healthy 
+      migrator: { condition: service_completed_successfully } #attente que le migrator soit fini 
     working_dir: /tests
     volumes:
-      - ./tests:/tests:ro
-    networks:
-      - app-network
-    command: ["python", "-m", "unittest", "-v"]
-
+      - /Users/axellerolain/Desktop/P5/projet-mongodb-healthcare/tests:/tests:ro    # tests
+    networks: [app-network]
+    command: ["python","-m","unittest","-v"]
 
 volumes:
   mongo-data:
