@@ -3,119 +3,85 @@
 
 Ce projet a pour but de migrer un dataset médical CSV vers MongoDB.
 
-La migration s’assure que :
+# 🏥 Projet Migration Données Médicales vers MongoDB
+## projet-mongodb-healthcare
 
-Les données sont correctement lues et transformées (dates, identifiants, types numériques).
+Ce projet migre un dataset médical (CSV) vers MongoDB. Il utilise Docker pour tout lancer facilement.
 
-La base MongoDB est alimentée par lots. 
-
-3 tests unitaires garantissent l’intégrité de la migration.
+La migration :
+- Lit et transforme les données (dates, types...).
+- Ajoute par petits groupes (batches).
+- Vérifie tout avec 3 tests unitaires.
 
 # 📦 Dataset
 
-Le dataset nettoyé **n’est pas versionné dans le repo** (pour éviter d’alourdir l’historique).  
+Le dataset nettoyé **n’est pas dans le repo** (trop lourd).  
 
-➡️ Téléchargement direct depuis la Release GitHub :
+Télécharge-le depuis la Release GitHub :  
+🔗 [dataset_ready4Mongo.csv](https://github.com/Barolax/projet-mongodb-healthcare/releases/download/v1.0/dataset_ready4Mongo.csv)
 
-🔗 [Télécharger dataset_ready4Mongo.csv](https://github.com/Barolax/projet-mongodb-healthcare/releases/download/v1.0/dataset_ready4Mongo.csv)
+Mets-le dans `./data/dataset_ready4Mongo.csv`.
 
-Placez le fichier dans ./data sous le nom : dataset_ready4Mongo.csv
-
-⚙️ Architecture du projet
+# ⚙️ Architecture du projet
 projet-mongodb-healthcare/
-├── automation/               # Service migrateur
-│   ├── Dockerfile
-│   ├── migration.py
-│   ├── requirements.txt
-│   └── docker-compose.yml    # Orchestration des services (mongo, migrator, tester)
-├── schema_base/              # Schéma JSON MongoDB
+├── automation/               # Pour le script de migration
+│   ├── Dockerfile            # Recette pour la boîte Python
+│   ├── migration.py         # Script qui migre les données
+│   └── requirements.txt      # Outils Python nécessaires
+├── schema_base/              # Schéma de la base (JSON)
 │   └── schema-base_medicale-patients.json
-├── tests/                    # Tests unitaires & export (démo)
-│   ├── test_migration.py
-│   └── export_test.json
-└── README.md
+├── tests/                    # Tests et export démo
+│   ├── test_migration.py    # Les 3 tests unitaires
+│   └── export_test.json     # Export démo (généré)
+├── docker-compose.yml        # Orchestre tout (Mongo, migration, tests)
+├── Makefile                  # Commandes rapides pour démo
+└── README.md                 # Ce guide
 
-🚀 Lancement de la migration
+# 🚀 Lancement
 
-Depuis la racine du projet :
+Depuis la racine :
 
+```bash
 docker compose up -d --build
 
+Check des logs : 
+docker compose logs -f migrator  # Pour la migration
+docker compose logs -f tester    # Pour les tests
 
-Vérifiez les logs :
+Pour arrêter et nettoyer :
+docker compose down -v
 
-docker compose logs -f migrator
-docker compose logs -f tester
+🔄 Ce qui se passe pendant la migration
+Le "migrator" exécute migration.py :
 
-🔄 Que se passe-t-il pendant la migration ?
-
-Le service migrator exécute migration.py, qui suit ce processus :
-
-Lecture du CSV avec Pandas
-
-Les colonnes de type date (Date_of_admission, Discharge_date) sont converties en objets datetime.
-
-Les NaN sont transformés en None pour être compatibles avec le format BSON.
-
-Préparation des données
-
-Vérification que Record_id est bien unique. (PK) 
-
-Transformation de certains champs en types corrects (int, double, date).
-
-Création d’un champ _id = Record_id pour l’unicité dans Mongo.
-
-Connexion à MongoDB
-
-Authentification via l’URI mongodb://root:example@mongo:27017/?authSource=admin.
-
-Sélection de la base base_medicale et de la collection patients.
-
-Nettoyage et indexation
-
-Si DROP_BEFORE=true, la collection est vidée.
-
-Création d’index sur Record_id (unicité) et Date_of_admission. 
-
-Insertion par lots (batch) 
-
-Découpage des documents par blocs de 1000 pour faciliter ingestion. 
-
-Affichage des statistiques (ok, doublons, erreurs).
-
-Contrôle d’intégrité
-
-Check le nombre de documents insérés = taille du CSV.
-
-Affiche un échantillon de document pour contrôle. 
-
-Export d’un fichier export_test.json contenant 5 documents en JSON depuis MongoCompass
+Lit le CSV avec Pandas (convertit dates, remplace vides par None).
+Vérifie Record_id unique.
+Crée _id = Record_id.
+Se connecte à Mongo (URI avec root/example).
+Vide la collection si DROP_BEFORE=true.
+Crée index sur Record_id (unique) et Date_of_admission.
+Insère par lots de 1000 (affiche stats).
+Vérifie le nombre total.
+Affiche un exemple de doc.
+Exporte 5 docs en JSON (export_test.json).
 
 ✅ Tests unitaires
+Le "tester" exécute test_migration.py :
 
-Le service tester exécute test_migration.py et vérifie que :
+Vérifie que la collection n'est pas vide.
+Vérifie les champs obligatoires (ex: Medical_condition, Date_of_admission).
+Vérifie le nombre exact (54966 docs).
 
-La collection n’est pas vide.
-
-Les champs obligatoires (Medical_condition, Date_of_admission, etc.) existent.
-
-Le nombre total de documents insérés correspond à celui du CSV. (nbre : 54966)
-
-Exécution manuelle :
-
+Lancement manuel :
 docker compose run --rm tester python -m unittest -v
 
 🔒 Authentification MongoDB
-
 Utilisateur : root
-
 Mot de passe : example
+URI pour connecter (ex: avec Compass) :
+mongodb://root:example@localhost:27017/?authSource=admin
 
-URI :
-
-mongodb://root:example@localhost:27017/?authSource=admin 
-
-📊 Exemple de document inséré
+📊 Exemple de document
 {
   "_id": 1,
   "Record_id": 1,
@@ -139,6 +105,19 @@ mongodb://root:example@localhost:27017/?authSource=admin
 
 📦 Volumes
 
-./data → CSV source.
+./data : Pour le CSV source.
+mongo-data : Stockage persistant de MongoDB (les données restent même si c'est arrêté).
 
-mongo-data → stockage persistant de MongoDB.
+🛠️ Démo live avec Makefile
+Pour une démo rapide:
+
+make up : Lance Mongo seul.
+make migrate : Construit et migre les données.
+make test : Lance les tests.
+make logs : Montre les logs de Mongo.
+make down : Arrête et nettoie tout.
+
+Note sur les ports
+Dans docker-compose.yml, les ports sont commentés (#) pour sécurité. 
+Retrait du # devant ports: - "27017:27017" si on veut connecter Compass 
+
