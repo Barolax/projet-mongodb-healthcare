@@ -24,18 +24,18 @@ Mets-le dans `./data/dataset_ready4Mongo.csv`.
 
 # ⚙️ Architecture du projet
 projet-mongodb-healthcare/
-├── automation/               # Pour le script de migration
-│   ├── Dockerfile            # Recette pour la boîte Python
-│   ├── migration.py         # Script qui migre les données
-│   └── requirements.txt      # Outils Python nécessaires
+├──  automation/  # Pour le script de migration
+│    ├── Dockerfile            # Recette pour la boîte Python
+│    ├── migration.py         # Script qui migre les données
+│    └── requirements.txt      # Outils Python nécessaires
 ├── schema_base/              # Schéma de la base (JSON)
-│   └── schema-base_medicale-patients.json
+│    └── schema-base_medicale-patients.json
 ├── tests/                    # Tests et export démo
-│   ├── test_migration.py    # Les 3 tests unitaires
-│   └── export_test.json     # Export démo (généré)
-├── docker-compose.yml        # Orchestre tout (Mongo, migration, tests)
-├── Makefile                  # Commandes rapides pour démo
-└── README.md                 # Ce guide
+│    ├── test_migration.py    # Les 3 tests unitaires
+│    └── export_test.json     # Export démo (généré)
+├──  docker-compose.yml        # Orchestre tout (Mongo, migration, tests)
+├──  Makefile                  # Commandes rapides pour démo
+└──  README.md                 # Ce guide
 
 # 🚀 Lancement
 
